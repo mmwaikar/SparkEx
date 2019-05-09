@@ -10,6 +10,10 @@ lazy val root = (project in file("."))
     name := "SparkEx",
     libraryDependencies ++= Seq(
       spark,
+      sparkSql,
+      sparkGraph,
+      sparkMlLib,
+      
       scalaTest % Test
     )
   )
