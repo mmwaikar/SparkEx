@@ -2,6 +2,7 @@ package com.codionics.spark.graphex
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.graphframes._
+import org.apache.spark.sql.Column
 
 object GraphEx {
 
@@ -44,15 +45,21 @@ object GraphEx {
       val g = GraphFrame(nodes, relationships)
 
       // using BFS
-      println("using BFS")
       g.vertices
-        .filter("population > 100000 and population < 3000000")
+        .filter("population > 100000 and population < 300000")
         .sort("population")
         .show()
+
+      val fromExpr = "id='Den Haag'"
+      val toExpr = "population > 100000 and population < 300000 and id <> 'Den Haag'"
+      val result = g.bfs.fromExpr(fromExpr).toExpr(toExpr).run()
+      result.show()
+
+      val columns = result.columns.filterNot(c => c.startsWith("e")).map(c => new Column(c))
+      result.select(columns: _*).show()
 
     } finally {
       spark.stop()
     }
-
   }
 }
